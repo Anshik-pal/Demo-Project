@@ -1,0 +1,619 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Ally's Restaurant — Exact-animation Replica</title>
+
+  <!-- Google fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+  <!-- Bootstrap 5 -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <!-- AOS CSS (for scroll animations) -->
+  <link href="https://unpkg.com/aos@2.3.4/dist/aos.css" rel="stylesheet">
+
+  <style>
+    :root{
+      --primary:#ff5a5f;
+      --muted:#7a7a7a;
+      --card-bg:#ffffff;
+      --glass: rgba(255,255,255,0.06);
+      --ease: cubic-bezier(.2,.9,.3,1);
+    }
+    *{ box-sizing:border-box; font-family:'Poppins',system-ui,-apple-system,"Segoe UI",Roboto,Arial; }
+    html,body{ height:100%; }
+    body{
+      margin:0;
+      background:#faf7f5;
+      color:#222;
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+      scroll-behavior:smooth;
+    }
+
+    /* NAV */
+    .navbar{
+      background:rgba(255,255,255,0.96);
+      backdrop-filter: blur(6px);
+      border-bottom:1px solid rgba(20,20,30,0.03);
+      box-shadow: 0 6px 18px rgba(10,10,20,0.04);
+    }
+    .navbar-brand{ color:var(--primary) !important; font-weight:800; letter-spacing:0.3px; }
+    .nav-link{ color:#333 !important; font-weight:600; transition: color .25s var(--ease); padding:.6rem .75rem; }
+    .nav-link:hover{ color:var(--primary) !important; }
+    .nav-link.active{ color:var(--primary) !important; }
+
+    /* HERO */
+    .hero{
+      min-height:72vh;
+      display:flex;
+      align-items:center;
+      background-image:
+        linear-gradient(180deg, rgba(0,0,0,0.28), rgba(0,0,0,0.06)),
+        url('https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=1600&q=70');
+      background-size:cover;
+      background-position:center;
+      color:#fff;
+      padding:5.5rem 0;
+      position:relative;
+      overflow:hidden;
+    }
+    .hero .card-glass{
+      background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02));
+      border-radius:14px;
+      padding:2rem;
+      box-shadow: 0 18px 50px rgba(12,12,12,0.28);
+      border:1px solid rgba(255,255,255,0.06);
+      max-width:720px;
+    }
+    .hero h1{
+      font-size:2.6rem; margin:0 0 .6rem 0; font-weight:800; letter-spacing:0.2px;
+      text-shadow: 0 6px 20px rgba(0,0,0,0.4);
+    }
+    .hero p.lead{ font-size:1.05rem; opacity:0.95; margin-bottom:1rem; line-height:1.4; }
+
+    .hero-visuals{ position:absolute; right:3%; top:12%; width:420px; pointer-events:none; }
+    .hero-visuals .vcard{ width:200px; margin-bottom:18px; transform-origin:center; transition: transform .6s var(--ease), box-shadow .4s var(--ease); }
+    .hero-visuals .vcard img{ width:100%; height:140px; object-fit:cover; display:block; border-radius:12px; }
+    .hero-visuals .vcard .card-body{ background:var(--card-bg); padding:.75rem; border-radius:0 0 12px 12px; text-align:left; box-shadow: 0 10px 30px rgba(10,10,20,0.08); }
+    .hero-visuals .vcard:hover{ transform: translateY(-10px) rotate(-1deg); box-shadow: 0 20px 50px rgba(10,10,20,0.18); pointer-events:auto; }
+
+    /* CTA Buttons */
+    .btn-cta{
+      padding:.6rem 1rem; border-radius:999px; font-weight:700; letter-spacing:.2px;
+      transition: transform .25s var(--ease), box-shadow .25s var(--ease);
+    }
+    .btn-cta:active{ transform: translateY(1px); }
+    .btn-primary-cta{ background:var(--primary); border:none; color:#fff; }
+    .btn-outline-cta{ background:transparent; border:1px solid rgba(255,255,255,0.18); color:#fff; }
+
+    /* MENU GRID + Cards */
+    section{ padding:4.2rem 0; }
+    .section-heading{ margin-bottom:1rem; display:flex; align-items:center; gap:1rem; }
+    .section-heading h2{ margin:0; font-weight:800; color:var(--primary); }
+    .menu-grid{ margin-top:1.4rem; }
+
+    .dish-card{
+      border-radius:12px;
+      background:var(--card-bg);
+      overflow:hidden;
+      box-shadow: 0 12px 30px rgba(10,10,20,0.06);
+      border:1px solid rgba(10,10,20,0.03);
+      transform: translateY(0);
+      transition: transform .45s var(--ease), box-shadow .45s var(--ease);
+    }
+    .dish-card:hover{ transform: translateY(-12px); box-shadow: 0 24px 60px rgba(10,10,20,0.12); }
+    .dish-card img{ width:100%; height:190px; object-fit:cover; display:block; transition: transform .5s var(--ease); }
+    .dish-card:hover img{ transform: scale(1.06) translateY(-3px); }
+
+    .dish-body{ padding:1rem; }
+    .dish-body h5{ margin:0; font-weight:700; font-size:1.05rem; }
+    .dish-body p.meta{ color:var(--muted); margin:.5rem 0; font-size:.95rem; }
+
+    .price-tag{
+      position:absolute; right:12px; top:12px;
+      background: linear-gradient(180deg,#fff,#fff); color:#111;
+      padding:.28rem .52rem; border-radius:8px; font-weight:800; box-shadow: 0 8px 24px rgba(10,10,20,0.08);
+    }
+    .card-footer-actions{ display:flex; justify-content:space-between; align-items:center; gap:.5rem; }
+
+    /* Hover micro animation on order button */
+    .btn-order{
+      transition: transform .22s var(--ease), box-shadow .22s var(--ease);
+      transform-origin:center;
+    }
+    .btn-order:hover{ transform: translateY(-4px) scale(1.02); box-shadow: 0 12px 30px rgba(10,10,20,0.12); }
+
+    /* Gallery */
+    .gallery-grid{ display:grid; grid-template-columns: repeat(4,1fr); gap:12px; margin-top:1rem; }
+    .gallery-grid img{ width:100%; height:160px; object-fit:cover; border-radius:10px; transition: transform .36s var(--ease), box-shadow .36s var(--ease); }
+    .gallery-grid img:hover{ transform: scale(1.05) translateY(-6px); box-shadow: 0 20px 50px rgba(10,10,20,0.12); }
+
+    /* Reservation card */
+    .reserve-card{ border-radius:12px; padding:1.4rem; background: linear-gradient(180deg,#fff,#fff); box-shadow: 0 12px 36px rgba(10,10,20,0.06); border:1px solid rgba(10,10,20,0.03); }
+
+    /* Footer */
+    footer{ background:#0b0b0b; color:#ddd; padding:2.6rem 0; margin-top:2.4rem; }
+
+    /* subtle floating animation */
+    @keyframes floaty { 0%{ transform: translateY(0);} 50%{ transform: translateY(-10px);} 100%{ transform: translateY(0);} }
+    .floaty{ animation: floaty 6s ease-in-out infinite; }
+
+    /* Responsive */
+    @media (max-width:991px){
+      .gallery-grid{ grid-template-columns: repeat(2,1fr); }
+      .hero-visuals{ display:none; }
+      .hero h1{ font-size:2rem; }
+    }
+    @media (max-width:575px){
+      .hero{ padding:3.2rem 0; min-height:48vh; }
+      .hero h1{ font-size:1.4rem; }
+      .dish-card img{ height:150px; }
+    }
+
+    /* AOS default overrides for smoothness */
+    [data-aos]{
+      transition-property: transform, opacity;
+      transition-timing-function: var(--ease);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav class="navbar navbar-expand-lg sticky-top">
+    <div class="container">
+      <a class="navbar-brand" href="#">Ally's</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse" id="navMenu">
+        <ul class="navbar-nav ms-auto align-items-lg-center">
+          <li class="nav-item"><a class="nav-link active" href="#home">Home</a></li>
+          <li class="nav-item"><a class="nav-link" href="#about">About</a></li>
+          <li class="nav-item"><a class="nav-link" href="#menu">Menu</a></li>
+          <li class="nav-item"><a class="nav-link" href="#gallery">Gallery</a></li>
+          <li class="nav-item"><a class="nav-link" href="#reserve">Reservation</a></li>
+          <li class="nav-item"><a class="nav-link" href="#contact">Contact</a></li>
+          <li class="nav-item ms-3"><button id="openAuth" class="btn btn-outline-dark btn-sm">Login</button></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <header id="home" class="hero">
+    <div class="container">
+      <div class="row align-items-center">
+        <div class="col-lg-6" data-aos="fade-right" data-aos-duration="900" data-aos-delay="100">
+          <div class="card-glass">
+            <small style="font-weight:700; color:#fff; opacity:.95;">Popular • Fresh</small>
+            <h1 style="margin-top:.6rem;">Taste handcrafted dishes at Ally's</h1>
+            <p class="lead">Seasonal ingredients, warm ambience and a menu that feels like home. Reserve a table or order online.</p>
+            <div class="mt-3 d-flex gap-2">
+              <a class="btn btn-cta btn-primary-cta" href="#menu">View Menu</a>
+              <a class="btn btn-cta btn-outline-cta" href="#reserve">Book Table</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-lg-6 d-none d-lg-block">
+          <div class="hero-visuals">
+            <div class="vcard floaty" data-aos="fade-left" data-aos-duration="900" data-aos-delay="200">
+              <img src="https://images.unsplash.com/photo-1604908177220-3c0f7c1b3a7b?auto=format&fit=crop&w=800&q=60" alt="">
+              <div class="card-body">
+                <strong>Smoky BBQ Burger</strong>
+                <div style="font-size:.9rem; color:var(--muted);">Juicy patty with house sauce</div>
+              </div>
+            </div>
+
+            <div class="vcard" data-aos="fade-left" data-aos-duration="900" data-aos-delay="320" style="width:260px; margin-left:40px;">
+              <img src="https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?auto=format&fit=crop&w=800&q=60" alt="">
+              <div class="card-body">
+                <strong>Herb Pasta</strong>
+                <div style="font-size:.9rem; color:var(--muted);">Creamy basil sauce</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ABOUT -->
+  <section id="about" data-aos="fade-up" data-aos-duration="800" data-aos-once="true">
+    <div class="container">
+      <div class="row align-items-center g-4">
+        <div class="col-lg-6" data-aos="fade-right" data-aos-duration="800" data-aos-delay="120">
+          <img src="https://images.unsplash.com/photo-1541542684-6e85c86ffb3d?auto=format&fit=crop&w=1000&q=60" class="img-fluid rounded-4 shadow-sm" alt="About Ally's">
+        </div>
+        <div class="col-lg-6" data-aos="fade-left" data-aos-duration="800" data-aos-delay="220">
+          <div class="section-heading">
+            <h2>About Ally's</h2>
+          </div>
+          <h3 style="margin-top:6px; font-weight:700;">A neighbourhood restaurant with soulful food</h3>
+          <p class="text-muted" style="margin-top:12px;">We create memorable meals with seasonal ingredients and warm hospitality. Perfect for family dinners and dates.</p>
+          <ul>
+            <li>Local sourcing</li>
+            <li>Family recipes</li>
+            <li>Cozy ambience</li>
+          </ul>
+          <div class="mt-3">
+            <a class="btn btn-outline-dark btn-cta" href="#contact">Contact Us</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- MENU -->
+  <section id="menu" class="bg-light" data-aos="fade-up" data-aos-duration="800" data-aos-once="true" data-aos-delay="80">
+    <div class="container">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <div>
+          <h4 style="color:var(--primary); font-weight:800;">Menu</h4>
+          <h2 style="margin-top:6px; font-weight:700;">Chef's Specials</h2>
+        </div>
+        <div>
+          <select id="filterCat" class="form-select form-select-sm">
+            <option value="all">All</option>
+            <option value="starters">Starters</option>
+            <option value="mains">Mains</option>
+            <option value="dessert">Dessert</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="row menu-grid g-4" id="menuGrid">
+        <!-- card 1 -->
+        <div class="col-md-4" data-aos="zoom-in" data-aos-duration="700" data-aos-delay="120">
+          <div class="dish-card position-relative" data-cat="mains">
+            <img src="https://images.unsplash.com/photo-1604908177220-3c0f7c1b3a7b?auto=format&fit=crop&w=1200&q=60" alt="">
+            <div class="price-tag">₹299</div>
+            <div class="dish-body">
+              <h5>Smoky BBQ Burger</h5>
+              <p class="meta">Crispy onion, cheddar, BBQ glaze</p>
+              <div class="card-footer-actions">
+                <small style="color:var(--muted); font-weight:700;">Popular</small>
+                <div>
+                  <button class="btn btn-sm btn-outline-dark btn-order" onclick="addCart('Smoky BBQ Burger')">Add</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- card 2 -->
+        <div class="col-md-4" data-aos="zoom-in" data-aos-duration="700" data-aos-delay="180">
+          <div class="dish-card position-relative" data-cat="mains">
+            <img src="https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?auto=format&fit=crop&w=1200&q=60" alt="">
+            <div class="price-tag">₹249</div>
+            <div class="dish-body">
+              <h5>Herb Pasta</h5>
+              <p class="meta">Linguine with cream & herbs</p>
+              <div class="card-footer-actions">
+                <small style="color:var(--muted); font-weight:700;">Chef</small>
+                <div>
+                  <button class="btn btn-sm btn-outline-dark btn-order" onclick="addCart('Herb Pasta')">Add</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- card 3 -->
+        <div class="col-md-4" data-aos="zoom-in" data-aos-duration="700" data-aos-delay="240">
+          <div class="dish-card position-relative" data-cat="starters">
+            <img src="https://images.unsplash.com/photo-1604908801269-3f7a7f2e6c9b?auto=format&fit=crop&w=1200&q=60" alt="">
+            <div class="price-tag">₹349</div>
+            <div class="dish-body">
+              <h5>Garlic Prawns</h5>
+              <p class="meta">Pan seared with lemon butter</p>
+              <div class="card-footer-actions">
+                <small style="color:var(--muted); font-weight:700;">Hot</small>
+                <div>
+                  <button class="btn btn-sm btn-outline-dark btn-order" onclick="addCart('Garlic Prawns')">Add</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- card 4 -->
+        <div class="col-md-4" data-aos="zoom-in" data-aos-duration="700" data-aos-delay="300">
+          <div class="dish-card position-relative" data-cat="dessert">
+            <img src="https://images.unsplash.com/photo-1600891964599-f61ba0e24092?auto=format&fit=crop&w=1200&q=60" alt="">
+            <div class="price-tag">₹129</div>
+            <div class="dish-body">
+              <h5>Chocolate Brownie</h5>
+              <p class="meta">Warm brownie with ice cream</p>
+              <div class="card-footer-actions">
+                <small style="color:var(--muted); font-weight:700;">Sweet</small>
+                <div>
+                  <button class="btn btn-sm btn-outline-dark btn-order" onclick="addCart('Chocolate Brownie')">Add</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- card 5 -->
+        <div class="col-md-4" data-aos="zoom-in" data-aos-duration="700" data-aos-delay="360">
+          <div class="dish-card position-relative" data-cat="mains">
+            <img src="https://images.unsplash.com/photo-1551782450-a2132b4ba21d?auto=format&fit=crop&w=1200&q=60" alt="">
+            <div class="price-tag">₹329</div>
+            <div class="dish-body">
+              <h5>Margherita Pizza</h5>
+              <p class="meta">Wood-fired crust, mozzarella</p>
+              <div class="card-footer-actions">
+                <small style="color:var(--muted); font-weight:700;">Classic</small>
+                <div>
+                  <button class="btn btn-sm btn-outline-dark btn-order" onclick="addCart('Margherita Pizza')">Add</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- card 6 -->
+        <div class="col-md-4" data-aos="zoom-in" data-aos-duration="700" data-aos-delay="420">
+          <div class="dish-card position-relative" data-cat="starters">
+            <img src="https://images.unsplash.com/photo-1543353071-087092ec393a?auto=format&fit=crop&w=1200&q=60" alt="">
+            <div class="price-tag">₹169</div>
+            <div class="dish-body">
+              <h5>Caesar Salad</h5>
+              <p class="meta">Crisp romaine & parmesan</p>
+              <div class="card-footer-actions">
+                <small style="color:var(--muted); font-weight:700;">Fresh</small>
+                <div>
+                  <button class="btn btn-sm btn-outline-dark btn-order" onclick="addCart('Caesar Salad')">Add</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- GALLERY -->
+  <section id="gallery" data-aos="fade-up" data-aos-duration="800" data-aos-once="true">
+    <div class="container">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <div>
+          <h4 style="color:var(--primary); font-weight:800;">Gallery</h4>
+          <h2 style="margin-top:6px; font-weight:700;">Moments from Ally's</h2>
+        </div>
+      </div>
+
+      <div class="gallery-grid">
+        <img src="https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=1000&q=60" alt="" data-aos="zoom-in" data-aos-duration="700" data-aos-delay="80">
+        <img src="https://images.unsplash.com/photo-1543353071-087092ec393a?auto=format&fit=crop&w=1000&q=60" alt="" data-aos="zoom-in" data-aos-duration="700" data-aos-delay="140">
+        <img src="https://images.unsplash.com/photo-1526318472351-c75fcf070cce?auto=format&fit=crop&w=1000&q=60" alt="" data-aos="zoom-in" data-aos-duration="700" data-aos-delay="200">
+        <img src="https://images.unsplash.com/photo-1532634896-26909d0d3b83?auto=format&fit=crop&w=1000&q=60" alt="" data-aos="zoom-in" data-aos-duration="700" data-aos-delay="260">
+        <img src="https://images.unsplash.com/photo-1528605248644-14dd04022da1?auto=format&fit=crop&w=1000&q=60" alt="" data-aos="zoom-in" data-aos-duration="700" data-aos-delay="320">
+        <img src="https://images.unsplash.com/photo-1512058564366-c9e3b3d8c5c8?auto=format&fit=crop&w=1000&q=60" alt="" data-aos="zoom-in" data-aos-duration="700" data-aos-delay="380">
+        <img src="https://images.unsplash.com/photo-1526318472351-c75fcf070cce?auto=format&fit=crop&w=1000&q=60" alt="" data-aos="zoom-in" data-aos-duration="700" data-aos-delay="440">
+        <img src="https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=1000&q=60" alt="" data-aos="zoom-in" data-aos-duration="700" data-aos-delay="500">
+      </div>
+    </div>
+  </section>
+
+  <!-- RESERVATION -->
+  <section id="reserve" class="bg-light" data-aos="fade-up" data-aos-duration="800" data-aos-once="true">
+    <div class="container">
+      <div class="row g-4 align-items-start">
+        <div class="col-lg-6" data-aos="fade-right" data-aos-duration="700" data-aos-delay="120">
+          <div class="reserve-card">
+            <h5 style="color:var(--primary); font-weight:800;">Reserve a Table</h5>
+            <p class="text-muted">Book your table — we’ll confirm shortly.</p>
+            <form id="reserveForm" class="row g-3">
+              <div class="col-sm-6"><input class="form-control" placeholder="Name" id="resName" required></div>
+              <div class="col-sm-6"><input class="form-control" placeholder="Phone" id="resPhone" required></div>
+              <div class="col-sm-4"><input type="date" class="form-control" id="resDate" required></div>
+              <div class="col-sm-4"><input type="time" class="form-control" id="resTime" required></div>
+              <div class="col-sm-4"><select class="form-select" id="resGuests"><option>2 guests</option><option>3 guests</option><option>4 guests</option><option>5+ guests</option></select></div>
+              <div class="col-12"><textarea class="form-control" rows="3" placeholder="Special requests" id="resNote"></textarea></div>
+              <div class="col-12 text-end"><button class="btn btn-primary-cta btn-cta" type="submit">Confirm</button></div>
+            </form>
+            <div id="resMsg" class="mt-3" style="display:none;"></div>
+          </div>
+        </div>
+
+        <div class="col-lg-6" data-aos="fade-left" data-aos-duration="700" data-aos-delay="200">
+          <div class="p-4 bg-white rounded-4 shadow-sm">
+            <h6 style="font-weight:800;">Opening hours</h6>
+            <p class="text-muted mb-1">Mon-Fri: 11:30 AM - 11:00 PM</p>
+            <p class="text-muted mb-1">Sat-Sun: 10:30 AM - 11:30 PM</p>
+            <hr>
+            <h6 style="font-weight:800;">Contact</h6>
+            <p class="text-muted mb-0">+91 98765 43210</p>
+            <p class="text-muted">123 Food Lane, City</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTACT -->
+  <section id="contact" data-aos="fade-up" data-aos-duration="800" data-aos-once="true">
+    <div class="container">
+      <div class="row g-4">
+        <div class="col-lg-6" data-aos="fade-right" data-aos-duration="700" data-aos-delay="120">
+          <h4 style="color:var(--primary); font-weight:800;">Get in touch</h4>
+          <p style="font-weight:700; margin-top:6px;">Contact us for events and reservations</p>
+          <form id="contactForm" class="mt-3">
+            <div class="mb-3"><input class="form-control" id="cName" placeholder="Your name" required></div>
+            <div class="mb-3"><input type="email" class="form-control" id="cEmail" placeholder="Email" required></div>
+            <div class="mb-3"><textarea class="form-control" id="cMessage" rows="5" placeholder="Message" required></textarea></div>
+            <div class="text-end"><button class="btn btn-primary-cta btn-cta" type="submit">Send Message</button></div>
+          </form>
+          <div id="cMsg" class="mt-3" style="display:none;"></div>
+        </div>
+
+        <div class="col-lg-6" data-aos="fade-left" data-aos-duration="700" data-aos-delay="220">
+          <div class="p-4 rounded-4 shadow-sm" style="background:#111; color:#fff;">
+            <h5 style="font-weight:800;">Visit us</h5>
+            <p style="color:#ddd;">Find us at the heart of the city — perfect for celebrations.</p>
+            <div style="height:250px; background:#222; border-radius:12px; display:flex; align-items:center; justify-content:center;">
+              <small>Map placeholder</small>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="container">
+      <div class="row gy-3">
+        <div class="col-md-6">
+          <h5 style="color:var(--primary); font-weight:800;">Ally's Restaurant</h5>
+          <p style="color:#ddd;">Local flavors. Warm hospitality.</p>
+        </div>
+        <div class="col-md-3">
+          <h6 style="color:#fff;">Quick Links</h6>
+          <ul class="list-unstyled" style="color:#ddd;">
+            <li><a href="#menu">Menu</a></li>
+            <li><a href="#reserve">Reservation</a></li>
+            <li><a href="#contact">Contact</a></li>
+          </ul>
+        </div>
+        <div class="col-md-3 text-md-end">
+          <p style="color:#ddd;">© <span id="yearNow"></span> Ally's</p>
+          <small style="color:#bbb;">Made with ❤️</small>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- AUTH MODAL -->
+  <div class="modal fade" id="authModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content rounded-4">
+        <div class="modal-header">
+          <h5 class="modal-title">Login</h5>
+          <button class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <form id="loginForm">
+            <div class="mb-3"><input class="form-control" placeholder="Email" required></div>
+            <div class="mb-3"><input class="form-control" placeholder="Password" type="password" required></div>
+            <div class="d-flex justify-content-between align-items-center">
+              <a href="#" id="forgot">Forgot?</a>
+              <button class="btn btn-dark btn-cta" type="submit">Login</button>
+            </div>
+          </form>
+
+          <form id="registerForm" style="display:none;">
+            <div class="mb-3"><input class="form-control" placeholder="Full name" required></div>
+            <div class="mb-3"><input class="form-control" placeholder="Email" required></div>
+            <div class="mb-3"><input class="form-control" placeholder="Password" type="password" required></div>
+            <div class="text-end"><button class="btn btn-dark btn-cta" type="submit">Register</button></div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button id="toggleAuth" class="btn btn-outline-secondary btn-sm">Switch</button>
+          <button class="btn btn-light" data-bs-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCRIPTS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+  <!-- AOS JS -->
+  <script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
+
+  <script>
+    // init AOS with settings similar to many modern sites
+    AOS.init({
+      duration: 700,
+      easing: 'cubic-bezier(.2,.9,.3,1)',
+      once: true,
+      offset: 120,
+      delay: 50,
+    });
+
+    // small helpers
+    document.getElementById('yearNow').textContent = new Date().getFullYear();
+
+    // scrollspy-like active nav link switching
+    const navlinks = document.querySelectorAll('.nav-link');
+    navlinks.forEach(l=>{
+      l.addEventListener('click', (e)=>{
+        e.preventDefault();
+        const id = l.getAttribute('href').replace('#','');
+        const el = document.getElementById(id);
+        if(el) el.scrollIntoView({behavior:'smooth', block:'start'});
+        navlinks.forEach(x=>x.classList.remove('active'));
+        l.classList.add('active');
+      });
+    });
+
+    // menu filter
+    document.getElementById('filterCat').addEventListener('change', function(){
+      const v = this.value;
+      document.querySelectorAll('#menuGrid .dish-card').forEach(card=>{
+        if(v === 'all' || card.getAttribute('data-cat') === v) card.parentElement.style.display = '';
+        else card.parentElement.style.display = 'none';
+      });
+      AOS.refresh(); // refresh to keep animations consistent after layout change
+    });
+
+    // add to cart demo
+    function addCart(item){
+      const el = document.createElement('div');
+      el.className = 'toast align-items-center text-bg-light border-0';
+      el.style.position = 'fixed';
+      el.style.right = '20px';
+      el.style.bottom = '24px';
+      el.style.padding = '10px 14px';
+      el.style.borderRadius = '10px';
+      el.style.boxShadow = '0 14px 40px rgba(10,10,20,0.12)';
+      el.innerText = item + ' added to cart (demo)';
+      document.body.appendChild(el);
+      setTimeout(()=> el.remove(), 1600);
+    }
+
+    // reservation & contact demo
+    document.getElementById('reserveForm').addEventListener('submit', function(e){
+      e.preventDefault();
+      const name = document.getElementById('resName').value;
+      const msg = document.getElementById('resMsg');
+      msg.style.display = 'block';
+      msg.className = 'alert alert-success';
+      msg.textContent = `Thanks ${name}! Reservation requested. (Demo)`;
+      setTimeout(()=> msg.style.display='none', 4000);
+      this.reset();
+    });
+
+    document.getElementById('contactForm').addEventListener('submit', function(e){
+      e.preventDefault();
+      const m = document.getElementById('cMsg');
+      m.style.display = 'block';
+      m.className = 'alert alert-info';
+      m.textContent = 'Thank you — we received your message. (Demo)';
+      setTimeout(()=> m.style.display='none', 4000);
+      this.reset();
+    });
+
+    // auth modal toggle
+    const authModal = new bootstrap.Modal(document.getElementById('authModal'));
+    document.getElementById('openAuth').addEventListener('click', ()=> authModal.show());
+    document.getElementById('toggleAuth').addEventListener('click', ()=>{
+      const log = document.getElementById('loginForm'), reg = document.getElementById('registerForm');
+      if(log.style.display === 'none'){ log.style.display=''; reg.style.display='none'; } else { log.style.display='none'; reg.style.display=''; }
+    });
+
+    // on load: refresh AOS to ensure elements animated correctly
+    window.addEventListener('load', ()=> AOS.refresh());
+  </script>
+</body>
+</html>
